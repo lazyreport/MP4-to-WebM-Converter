@@ -1,6 +1,6 @@
 # Tauri + React + Typescript
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+This app converts .mp4 video files into .webm, for compressing high-resolution videos into most web-friendly version of it. Currently the user needs to have FFmpeg set up locally, plainng on bundling FFmpeg all togther to eliminate initial setup completely.
 
 ## Recommended IDE Setup
 
