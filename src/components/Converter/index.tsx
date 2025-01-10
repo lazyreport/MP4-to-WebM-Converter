@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { FileWithPath } from "../../types";
+import { ConversionResult, FileWithPath } from "../../types";
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { DragDropArea } from "./DragDropArea";
@@ -94,40 +94,54 @@ const Converter = () => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-const convertFiles = async () => {
-  if (!outputDir) {
-    setError("Please select an output directory first");
-    return;
-  }
-
-  setConverting(true);
-  setError("");
-  setSuccess("");
-
-  try {
-    for (const file of files) {
-      console.log("Converting with settings:", {
-        inputPath: file.path,
-        outputDir: outputDir,
-        quality: settings.quality,
-      });
-
-      await invoke("convert_to_webm", {
-    
-        inputPath: file.path,
-        outputDir: outputDir,
-        quality: settings.quality,
-      });
+  const convertFiles = async () => {
+    if (!outputDir) {
+      setError("Please select an output directory first");
+      return;
     }
-    setSuccess("Conversion completed successfully!");
-    setFiles([]);
-  } catch (err) {
-    console.error("Conversion error:", err);
-    setError(`Conversion failed: ${err}`);
-  } finally {
-    setConverting(false);
-  }
-};
+
+    setConverting(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      for (const file of files) {
+        console.log("Converting with settings:", {
+          inputPath: file.path,
+          outputDir: outputDir,
+          quality: settings.quality,
+        });
+
+        await invoke<ConversionResult>("convert_to_webm", {
+          inputPath: file.path,
+          outputDir: outputDir,
+          quality: settings.quality,
+        }).then((result: ConversionResult) => {
+          const conversionResult = result as ConversionResult;
+
+          console.log(
+            `Original size: ${conversionResult.input_size.toFixed(2)} MB`
+          );
+          console.log(
+            `Compressed size: ${conversionResult.output_size.toFixed(2)} MB`
+          );
+          console.log(
+            `Compression ratio: ${conversionResult.compression_ratio.toFixed(
+              2
+            )}%`
+          );
+          console.log(`Quality used: ${conversionResult.quality}`);
+        });
+      }
+      setSuccess("Conversion completed successfully!");
+      setFiles([]);
+    } catch (err) {
+      console.error("Conversion error:", err);
+      setError(`Conversion failed: ${err}`);
+    } finally {
+      setConverting(false);
+    }
+  };
 
   return (
     <div className="w-full max-w-2xl mx-auto p-6 space-y-6">

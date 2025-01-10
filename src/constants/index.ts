@@ -1,27 +1,27 @@
 export const qualityOptions = [
   {
-    label: "Low",
+    label: "Very Low (1M)",
     bitrate: "1M",
-    estimate: "~30% of original size",
+  
   },
   {
-    label: "Medium",
+    label: "Low (2M)",
     bitrate: "2M",
-    estimate: "~50% of original size",
+ 
   },
   {
-    label: "High",
+    label: "Medium (4M)",
     bitrate: "4M",
-    estimate: "~70% of original size",
+
   },
   {
-    label: "Very High",
+    label: "High (8M)",
     bitrate: "8M",
-    estimate: "~70% of original size",
+   
   },
   {
-    label: "Ultra",
+    label: "Very High (16M)",
     bitrate: "16M",
-    estimate: "~original size",
+
   },
 ];
